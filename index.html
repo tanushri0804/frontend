@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Users App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #4CAF50; 
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    main {
+      padding: 20px;
+      max-width: 800px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-top: 20px;
+      color: #4CAF50;
+    }
+
+    .btn-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #777;
+    }
+
+    footer a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    #output {
+      margin-top: 30px;
+      font-size: 16px;
+      color: #555;
+      white-space: pre-wrap;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Mini Users App
+  </header>
+  <main>
+    <h2>CRUD Operations</h2>
+    <div class="btn-container">
+      <button id="read-users">Get All Users</button>
+      <button id="create-user">Add New User</button>
+      <button id="update-user">Update User</button>
+      <button id="delete-user">Delete User</button>
+    </div>
+    <div id="output"></div>
+  </main>
+  <footer>
+    Created by <a href="#">Tanu Shri</a>
+  </footer>
+
+  <script>
+    // Your Glitch project URL
+    const baseURL = "https://young-attractive-pudding.glitch.me/users";
+
+    // Output container
+    const output = document.getElementById('output');
+
+    // Read all users
+    document.getElementById('read-users').addEventListener('click', async () => {
+      const response = await fetch(baseURL);
+      const users = await response.json();
+      output.textContent = JSON.stringify(users, null, 2);
+      console.log("Users:", users);
+    });
+
+    // Create a new user
+    document.getElementById('create-user').addEventListener('click', async () => {
+      const name = prompt("Enter User Name:");
+      if (!name) return alert("User Name is required!");
+
+      const id = prompt("Enter User ID:");
+      if (!id) return alert("User ID is required!");
+
+      const email = prompt("Enter User Email:");
+      if (!email) return alert("User Email is required!");
+
+      const newUser = { id: parseInt(id), name, email };
+
+      const response = await fetch(baseURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newUser)
+      });
+
+      const user = await response.json();
+      output.textContent = `User Created: ${JSON.stringify(user, null, 2)}`;
+      console.log("Created User:", user);
+    });
+
+    // Update user by ID
+    document.getElementById('update-user').addEventListener('click', async () => {
+      const userId = prompt("Enter the User ID you want to update:");
+      if (!userId) return alert("User ID is required!");
+
+      const updatedName = prompt("Enter the new name for the user:");
+      if (!updatedName) return alert("New name is required!");
+
+      const updatedEmail = prompt("Enter the new email for the user:");
+      if (!updatedEmail) return alert("New email is required!");
+
+      const updatedUser = { name: updatedName, email: updatedEmail };
+
+      const response = await fetch(`${baseURL}/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updatedUser)
+      });
+      const user = await response.json();
+      output.textContent = `User Updated: ${JSON.stringify(user, null, 2)}`;
+      console.log("Updated User:", user);
+    });
+
+    // Delete user by ID
+    document.getElementById('delete-user').addEventListener('click', async () => {
+      const userId = prompt("Enter the User ID you want to delete:");
+      if (!userId) return alert("User ID is required!");
+
+      const response = await fetch(`${baseURL}/${userId}`, {
+        method: "DELETE"
+      });
+      if (response.status === 200) {
+        output.textContent = `User with ID ${userId} deleted successfully.`;
+      } else {
+        output.textContent = `Failed to delete user with ID ${userId}.`;
+      }
+      console.log("Delete Status:", response.status);
+    });
+  </script>
+</body>
+</html>
